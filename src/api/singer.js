@@ -34,48 +34,7 @@ export function getSingerList() {
     });
 }
 
-export function getSongUrl({ singerMid = '0025NhlN2yWrP4', songmid = '003hFxQh276Cv5', songtype = 0 }) {
-  // const signData = {
-  //   comm: {
-  //     ct: 24,
-  //     cv: 0,
-  //   },
-  //   singerSongList: {
-  //     method: "GetSingerSongList",
-  //     param: {
-  //       order: 1,
-  //       singerMid: singerMid,
-  //       begin: 0,
-  //       num: 10,
-  //     },
-  //     module: "musichall.song_list_server",
-  //   },
-  // };
-  const data = {
-    sign: 'zzafi7i9ytawy496a6231fcce5873aac177284c42746c',
-    // sign: getSign(signData),
-    req_0: {
-      module: "vkey.GetVkeyServer",
-      method: "CgiGetVkey",
-      param: {
-        guid: "8947964065",
-        songmid: [songmid],
-        songtype: [songtype],
-        filename: ["RS02002q83Sd2G7Y7D.mp3"],
-        uin: "857763476",
-        loginflag: 1,
-        platform: "23",
-        h5to: "speed",
-      },
-    },
-    comm: {
-      g_tk: 1347101315,
-      uin: 857763476,
-      format: "json",
-      platform: "h5"
-    },
-  };
-  console.log(data)
+export function getSongUrl(data) {
   return axios.post("/api/getSongUrl", data).then((res) => {
     return Promise.resolve(res.data);
   });
@@ -99,7 +58,7 @@ export function getSingerDetail(singerId) {
       module: "musichall.song_list_server",
     },
   };
-  let sign = getSign(data)
+  let sign = getSign(data);
   const params = Object.assign(
     {},
     {
@@ -125,5 +84,5 @@ function getSign(data) {
     sign += str[Math.floor(Math.random() * 36)];
   }
   sign += window.__sign_hash_20200305("CJBPACrRuNy7" + JSON.stringify(data));
-  return sign
+  return sign;
 }

@@ -19,7 +19,7 @@ export default {
   created() {
     this._getSingerDetail(this.singer.id);
     getSongUrl({
-      data: 1,
+      songmidList: ['001Y7zXa1p0ryF', '0013WPvt4fQH2b'],
     });
   },
   computed: {
