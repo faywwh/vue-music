@@ -17,7 +17,7 @@
         <h2 class="list-group-title">{{ group.title }}</h2>
         <uL>
           <li
-            v-for="(item, index) in group.items"
+            v-for="(item, index) in filterItems(group.items)"
             class="list-group-item"
             :key="index"
             @click="selectItem(item)"
@@ -102,6 +102,15 @@ export default {
     },
   },
   methods: {
+    filterItems(items) {
+      return items.map((item) => {
+        item.avatar = item.avatar.replace("webp", "jpg");
+        return item;
+      });
+    },
+    refresh() {
+      this.$refs.listview.refresh();
+    },
     selectItem(item) {
       this.$emit("select", item);
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="slider" ref="slider">
     <div class="slider-group" ref="sliderGroup">
-      <slot> </slot>
+      <slot></slot>
     </div>
     <div class="dots">
       <span
@@ -16,7 +16,9 @@
 
 <script>
 import { addClass } from "common/js/dom";
-import BScroll from "better-scroll";
+import BScroll from "@better-scroll/core";
+import Slide from "@better-scroll/slide";
+BScroll.use(Slide);
 
 export default {
   data() {
@@ -44,10 +46,6 @@ export default {
       this._setSliderWidth();
       this._initDots();
       this._initSlider();
-
-      if (this.autoPlay) {
-        this._play();
-      }
     }, 20);
     window.addEventListener("resize", () => {
       if (!this.slider) {
@@ -77,36 +75,22 @@ export default {
       this.slider = new BScroll(this.$refs.slider, {
         scrollX: true,
         scrollY: false,
+        slide: {
+          loop: this.loop,
+          autoplay: this.autoPlay,
+          interval: this.interval,
+        },
         momentum: false,
-        snap: true,
-        snapLoop: this.loop,
-        snapThreshold: 0.3,
-        snapSpeed: 400,
+        bounce: false,
+        stopPropagation: true,
       });
-      this.slider.on("scrollEnd", () => {
-        this.pageIndex = this.slider.getCurrentPage().pageX;
-        if (this.loop) {
-          this.pageIndex -= 1;
-        }
-        this.currentPageIndex = this.pageIndex;
+      this.slider.on("slideWillChange", (page) => {
+        this.currentPageIndex = page.pageX;
       });
     },
     _initDots() {
       this.dots = new Array(this.children.length);
     },
-    _play() {
-      // let pageIndex = this.currentPageIndex + 1
-      // if (this.loop) {
-      //   pageIndex += 1
-      // }
-      clearInterval(this.timer);
-      this.timer = setInterval(() => {
-        this.slider.next();
-      }, this.interval);
-    },
-  },
-  destroyed() {
-    clearInterval(this.timer);
   },
 };
 </script>

@@ -17,10 +17,7 @@ export default {
     };
   },
   created() {
-    this._getSingerDetail(this.singer.id);
-    getSongUrl({
-      songmidList: ['001Y7zXa1p0ryF', '0013WPvt4fQH2b'],
-    });
+    this._getSingerDetail();
   },
   computed: {
     title() {
@@ -32,19 +29,45 @@ export default {
     ...mapGetters(["singer"]),
   },
   methods: {
-    _getSingerDetail(singerId) {
-      getSingerDetail(singerId).then((res) => {
+    _getSingerDetail() {
+      if (!this.singer.id) {
+        this.$router.push("/singer");
+        return;
+      }
+      getSingerDetail(this.singer.id).then((res) => {
         this.songs = this._normalizeSong(res.singerSongList.data.songList);
-        console.log(this.songs);
       });
     },
+    //  格式化歌曲列表数据
     _normalizeSong(list) {
       let ret = [];
-      for (let item of list) {
-        ret.push(createSong(item.songInfo));
-      }
+      const songmidList = list.map((item) => item.songInfo.mid);
+      getSongUrl({
+        songmidList,
+      }).then((res) => {
+        res.list &&
+          res.list.forEach((item, index) => {
+            ret.push(
+              createSong(list[index].songInfo, item.m4aUrl, item.tryPlay)
+            );
+          });
+      });
       return ret;
     },
+    //  同步操作
+    // __normalizeSong(list) {
+    //   let ret = [];
+    //   const promiseArr = [];
+    //   list.forEach((item) => {
+    //     promiseArr.push(getSongUrl({ songmidList: [item.songInfo.mid] }));
+    //   });
+    //   Promise.all(promiseArr).then((res) => {
+    //     res.forEach((data, index) => {
+    //       ret.push(createSong(list[index].songInfo, data.list[0].m4aUrl));
+    //     });
+    //   });
+    //   return ret;
+    // },
   },
   components: {
     musicList,

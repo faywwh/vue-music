@@ -53,7 +53,7 @@ export function getSingerDetail(singerId) {
         order: 1,
         singerMid: singerId,
         begin: 0,
-        num: 10,
+        num: 20,
       },
       module: "musichall.song_list_server",
     },
@@ -76,7 +76,7 @@ export function getSingerDetail(singerId) {
     });
 }
 
-function getSign(data) {
+export function getSign(data) {
   let str = "abcdefghijklmnopqrstuvwxyz0123456789";
   let count = Math.floor(Math.random() * 7 + 10);
   let sign = "zza";

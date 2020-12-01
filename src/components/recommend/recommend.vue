@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll class="recommend-content" :data="distData" ref="Scroll">
       <div>
         <div
@@ -9,7 +9,7 @@
         >
           <slider>
             <div v-for="(item, index) in recommends" :key="index">
-              <a href="http://www.baidu.com">
+              <a>
                 <img :src="item.url" class="needsclick" @load="loadImage" />
               </a>
             </div>
@@ -18,7 +18,12 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="(item, index) in distData" :key="index">
+            <li
+              class="item"
+              v-for="(item, index) in distData"
+              :key="index"
+              @click="selectItem(item)"
+            >
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.cover" />
               </div>
@@ -36,6 +41,7 @@
         <loading v-if="!distData.length"></loading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -44,8 +50,11 @@ import Scroll from "base/scroll/scroll";
 import slider from "base/slider/slider";
 import Loading from "base/loading/loading";
 import { getDiscList } from "api/recommend";
+import { playlistMixin } from "common/js/mixin";
+import { mapMutations } from "vuex";
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       recommends: [
@@ -74,6 +83,20 @@ export default {
     this._getDiscList();
   },
   methods: {
+    ...mapMutations({
+      setDisc: "SET_DISC",
+    }),
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.content_id}`,
+      });
+      this.setDisc(item);
+    },
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? "60px" : "";
+      this.$refs.recommend.style.bottom = bottom;
+      this.$refs.Scroll.refresh();
+    },
     _getDiscList() {
       getDiscList().then((res) => {
         this.distData = res.recomPlaylist.data.v_hot;
