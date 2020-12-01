@@ -163,9 +163,9 @@ apiRoutes.post("/getSongUrl", bodyParser.json(), function (req, res) {
     });
 });
 
-app.use("/api", apiRoutes);
+app.use("/music/api", apiRoutes);
 
-app.use(express.static('./dist'))
+app.use('/music', express.static('./dist'));
 
 module.exports = app.listen(port, function (err) {
   if (err) {
